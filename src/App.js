@@ -30,12 +30,6 @@ const list = [
   }
 ];
 
-function isSearched(searchTerm) {
-  return function(item) {
-    return item.title.toLowerCase().includes(searchTerm.toLowerCase());
-  };
-}
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -73,9 +67,10 @@ class App extends Component {
       .catch(error => error);
   }
 
-  onSearchSubmit() {
+  onSearchSubmit(event) {
     const { searchTerm } = this.state;
     this.fetchSearchTopStories(searchTerm);
+    event.preventDefault();
   }
 
   onSearchChange(event) {
@@ -102,13 +97,7 @@ class App extends Component {
             Search
           </Search>
         </div>
-        {result && (
-          <Table
-            list={result.hits}
-            pattern={searchTerm}
-            onDismiss={this.onDismiss}
-          />
-        )}
+        {result && <Table list={result.hits} onDismiss={this.onDismiss} />}
       </div>
     );
   }
@@ -123,7 +112,7 @@ const Search = ({ value, onChange, onSubmit, children }) => (
 
 const Table = ({ list, pattern, onDismiss }) => (
   <div className="table">
-    {list.filter(isSearched(pattern)).map(item => (
+    {list.map(item => (
       <div key={item.objectID} className="table-row">
         <span style={largeColumn}>
           <a href={item.url}>{item.title}</a>
